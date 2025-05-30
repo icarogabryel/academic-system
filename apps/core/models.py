@@ -20,8 +20,9 @@ class Subject(models.Model):
 
 
 class Section(models.Model):
-    code = models.CharField(primary_key=True, max_length=10, unique=True)
-    schedule = models.CharField(max_length=10)
+    schedule = models.CharField(max_length=10)  #todo do regex validation
+    beginning_date = models.DateField(null=True, blank=True)
+    ending_date = models.DateField(null=True, blank=True)
     subject = models.ForeignKey(
         Subject,
         # When a subject is deleted, all sections related to it will also be
@@ -31,9 +32,9 @@ class Section(models.Model):
     )
 
     def __str__(self):
-        return self.code
+        return self.pk
 
     class Meta:
         verbose_name = "Section"
         verbose_name_plural = "Sections"
-        ordering = ['code']
+        ordering = ['beginning_date', 'ending_date']
