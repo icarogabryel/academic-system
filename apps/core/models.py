@@ -24,6 +24,7 @@ class Section(models.Model):
     schedule = models.CharField(max_length=5, null=True, blank=True)  #todo do regex validation
     beginning_date = models.DateField(null=True, blank=True)
     ending_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     subject = models.ForeignKey(
         Subject,
         # When a subject is deleted, all sections related to it will also be
