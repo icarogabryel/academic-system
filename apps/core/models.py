@@ -1,11 +1,12 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from apps.users.models import Student, Teacher
 
 
 class Subject(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
-        default='',
     )
     description = models.TextField()
     wrokload = models.PositiveIntegerField()
@@ -14,13 +15,13 @@ class Subject(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Subject"
-        verbose_name_plural = "Subjects"
+        verbose_name = 'Subject'
+        verbose_name_plural = 'Subjects'
         ordering = ['name']
 
 
 class Section(models.Model):
-    schedule = models.CharField(max_length=10)  #todo do regex validation
+    schedule = models.CharField(max_length=5, null=True, blank=True)  #todo do regex validation
     beginning_date = models.DateField(null=True, blank=True)
     ending_date = models.DateField(null=True, blank=True)
     subject = models.ForeignKey(
@@ -32,9 +33,63 @@ class Section(models.Model):
     )
 
     def __str__(self):
-        return self.pk
+        return str(self.subject) + f' - {self.pk}'
 
     class Meta:
-        verbose_name = "Section"
-        verbose_name_plural = "Sections"
+        verbose_name = 'Section'
+        verbose_name_plural = 'Sections'
         ordering = ['beginning_date', 'ending_date']
+
+
+def get_grade_field():
+    """Returns a field definition for a grade."""
+    return models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(10.0),
+        ]
+    )
+
+
+class Enrollment(models.Model):
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name='enrollments',
+    )
+    section = models.ForeignKey(
+        Section,
+        on_delete=models.CASCADE,
+        related_name='enrollments',
+    )
+    grade_1 = get_grade_field()
+    grade_2 = get_grade_field()
+    grade_3 = get_grade_field()
+
+    class Meta:
+        unique_together = ('student', 'section')
+        verbose_name = 'Enrollment'
+        verbose_name_plural = 'Enrollments'
+        ordering = ['section', 'student']
+
+
+class Assignment(models.Model):
+    section = models.ForeignKey(
+        Section,
+        on_delete=models.CASCADE,
+        related_name='assignments',
+    )
+    teacher = models.ForeignKey(
+        Teacher,
+        on_delete=models.CASCADE,
+        related_name='assignments',
+    )
+
+    class Meta:
+        verbose_name = 'Assignment'
+        verbose_name_plural = 'Assignments'
+        ordering = ['section', 'teacher']
