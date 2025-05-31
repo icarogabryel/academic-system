@@ -26,13 +26,27 @@ class Student(Person):
         return self.name
 
 
-class Teacher(Person):
-    # teacher specific fields
+class Employee(Person):
     employee_id = models.CharField(max_length=6, primary_key=True)
 
     class Meta:
+        abstract = True
+
+
+class Teacher(Employee):
+    class Meta:
         verbose_name = 'Teacher'
         verbose_name_plural = 'Teachers'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class Coordinator(Person):
+    class Meta:
+        verbose_name = 'Coordinator'
+        verbose_name_plural = 'Coordinators'
         ordering = ['name']
 
     def __str__(self):
