@@ -10,7 +10,7 @@ class Person(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        abstract = True
+        abstract = True  # Don't create a table for this model
 
 
 class Student(Person):
@@ -28,26 +28,18 @@ class Student(Person):
 
 class Employee(Person):
     employee_id = models.CharField(max_length=6, primary_key=True)
+    options = (
+        ('teacher', 'Teacher'),
+        ('coordinator', 'Coordinator'),
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=options,
+        null=True,
+        blank=True
+    )
 
     class Meta:
-        abstract = True
-
-
-class Teacher(Employee):
-    class Meta:
-        verbose_name = 'Teacher'
-        verbose_name_plural = 'Teachers'
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
-class Coordinator(Person):
-    class Meta:
-        verbose_name = 'Coordinator'
-        verbose_name_plural = 'Coordinators'
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
+        verbose_name = 'Employee'
+        verbose_name_plural = 'Employees'
+        ordering = ['role', 'name']

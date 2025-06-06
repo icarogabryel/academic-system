@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from apps.users.models import Student, Teacher
+from apps.users.models import Student, Employee
 
 
 class Subject(models.Model):
@@ -21,7 +21,8 @@ class Subject(models.Model):
 
 
 class Section(models.Model):
-    schedule = models.CharField(max_length=5, null=True, blank=True)  #todo do regex validation
+    # todo Do regex validation
+    schedule = models.CharField(max_length=5, null=True, blank=True)
     beginning_date = models.DateField(null=True, blank=True)
     ending_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -85,10 +86,14 @@ class Assignment(models.Model):
         related_name='assignments',
     )
     teacher = models.ForeignKey(
-        Teacher,
+        Employee,
         on_delete=models.CASCADE,
         related_name='assignments',
     )
+
+    def clean(self):  # ! Improve this method
+        if self.teacher.role != 'teacher':
+            raise ValueError("Only teachers can be assigned to sections.")
 
     class Meta:
         verbose_name = 'Assignment'

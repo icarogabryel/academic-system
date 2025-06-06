@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+  </head>
+
+  <body>
+    <h2>Login</h2>
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li style="color: red">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required /><br /><br />
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      />
+      <br/><br/>
+      <label for="profile">Profile:</label>
+      <select id="profile" name="profile" required>
+        <option value="student">Student</option>
+        <option value="employee">Employee</option>
+      </select>
+      <button type="submit">Login</button>
+    </form>
+
+  </body>
+
+</html>
